@@ -21,5 +21,12 @@
   </component>
   <component name="TemplatesService">
     <option name="TEMPLATE_CONFIGURATION" value="Django" />
+    <option name="TEMPLATE_FOLDERS">
+      <list>
+        <option value="$MODULE_DIR$/mailing/templates" />
+        <option value="$MODULE_DIR$/mailing/templates/mailing" />
+        <option value="$MODULE_DIR$/mailing/templates/mailing/includes" />
+      </list>
+    </option>
   </component>
 </module>
