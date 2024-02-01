@@ -24,7 +24,7 @@ class Client(models.Model):
 class Message(models.Model):
     subject = models.CharField(max_length=150, verbose_name='Email subject')
     body = models.TextField(verbose_name="Message's text")
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name='User')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name='User', **NULLABLE)
 
     def __str__(self):
         return f'{self.subject}'
@@ -54,8 +54,8 @@ class Mailing(models.Model):
 
     clients = models.ManyToManyField(Client, verbose_name='Clients for mailing')
     message = models.ForeignKey(Message, on_delete=models.CASCADE, verbose_name='Message')
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name='User')
-    is_active = models.BooleanField(default=True, verbose_name='mailing status')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name='User', **NULLABLE)
+    is_active = models.BooleanField(default=True, verbose_name='is active?')
 
     def __str__(self):
         return f'ID: {self.id}, user: {self.user}'

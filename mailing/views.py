@@ -1,8 +1,11 @@
+from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.shortcuts import render
+from django.http import HttpResponseForbidden
+from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
-from django.views.generic import TemplateView, ListView, CreateView, UpdateView, DeleteView
+from django.views.generic import TemplateView, ListView, CreateView, UpdateView, DeleteView, DetailView
 
+from mailing.forms import MailingForm
 from mailing.models import Client, Mailing
 
 
@@ -63,3 +66,67 @@ class ClientDeleteView(UserPassesTestMixin, DeleteView):
         client = self.get_object()
         user = self.request.user
         return user.is_authenticated and (client.user == user or user.has_perm('mailing.delete_client'))
+
+
+class MailingListView(LoginRequiredMixin, ListView):
+    model = Mailing
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        if self.request.user.has_perm('mailing.view_mailing'):
+            return queryset
+
+        return queryset.filter(user=self.request.user)
+
+
+class MailingDetailView(LoginRequiredMixin, DetailView):
+    model = Mailing
+
+    def get_object(self, queryset=None):
+        self.object = super().get_object(queryset)
+        if self.request.user.has_perm('mailing.view_mailing') or self.request.user == self.object.user:
+            return self.object
+        raise HttpResponseForbidden
+
+
+class MailingCreateView(LoginRequiredMixin, CreateView):
+    model = Mailing
+    form_class = MailingForm
+    success_url = reverse_lazy('mailing:mailing_list')
+
+    def form_valid(self, form):
+        if form.is_valid():
+            self.object = form.save(commit=False)
+            self.object.user = self.request.user
+            self.object.save()
+        return super().form_valid(form)
+
+
+class MailingUpdateView(UserPassesTestMixin, UpdateView):
+    model = Mailing
+    fields = '__all__'
+    success_url = reverse_lazy('mailing:mailing_list')
+
+    def test_func(self):
+        mailing = self.get_object()
+        user = self.request.user
+        return user.is_authenticated and (mailing.user == user or user.has_perm('mailing.change_mailing'))
+
+
+class MailingDeleteView(UserPassesTestMixin, DeleteView):
+    model = Mailing
+    success_url = reverse_lazy('mailing:mailing_list')
+
+    def test_func(self):
+        mailing = self.get_object()
+        user = self.request.user
+        return user.is_authenticated and (mailing.user == user or user.has_perm('mailing.delete_mailing'))
+
+
+@permission_required(perm='mailing.set_mailing_status')
+def set_mailing_status(request, pk):
+    obj = get_object_or_404(Mailing, pk=pk)
+    if obj:
+        obj.mailing_status = Mailing.STATUS_CHOICES[0][0]
+        obj.save()
+    return redirect(request.META.get('HTTP_REFERER'))

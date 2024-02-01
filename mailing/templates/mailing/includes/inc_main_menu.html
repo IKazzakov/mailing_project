@@ -28,7 +28,7 @@
             <a class="dropdown-item" href="">Блог</a>
             <a class="dropdown-item" href="{% url 'mailing:client_list' %}">Клиенты</a>
             <a class="dropdown-item" href="">Сообщения</a>
-            <a class="dropdown-item" href="">Рассылки</a>
+            <a class="dropdown-item" href="{% url 'mailing:mailing_list' %}">Рассылки</a>
             <a class="dropdown-item" href="">Статус рассылок</a>
         </div>
 
@@ -45,7 +45,7 @@
     </a>
     <a class="p-2 btn btn-outline-dark" href="">Блог</a>
     <a class="p-2 btn btn-outline-dark" href="">Сообщения</a>
-    <a class="p-2 btn btn-outline-dark" href="">Все рассылки</a>
+    <a class="p-2 btn btn-outline-dark" href="{% url 'mailing:mailing_list' %}">Все рассылки</a>
     <a class="p-2 btn btn-outline-dark" href="">Статус рассылок</a>
 </div>
 
