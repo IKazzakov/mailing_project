@@ -6,8 +6,9 @@ from django.urls import reverse_lazy
 from django.views.generic import TemplateView, ListView, CreateView, UpdateView, DeleteView, DetailView
 
 from mailing.forms import MailingForm
-from mailing.models import Client, Mailing
+from mailing.models import Client, Mailing, Message
 
+from mailing.services import cache_message
 
 # Create your views here.
 
@@ -17,10 +18,15 @@ class HomePageView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
-        context_data['count_mailing_all'] = Mailing.objects.all().count()
-        context_data['count_mailing_active'] = Mailing.objects.filter(is_active=True).count()
-        context_data['count_unique_clients'] = Client.objects.distinct().count()
+        if self.request.user.has_perm('mailing.set_mailing_active'):
+            context_data['count_mailing_all'] = Mailing.objects.all().count()
+            context_data['count_mailing_active'] = Mailing.objects.filter(is_active=True).count()
+            context_data['count_unique_clients'] = Client.objects.distinct().count()
+        context_data['count_mailing_all'] = Mailing.objects.filter(user=self.request.user).count()
+        context_data['count_mailing_active'] = Mailing.objects.filter(user=self.request.user, is_active=True).count()
+        context_data['count_unique_clients'] = Client.objects.filter(user=self.request.user).distinct().count()
         # context_data['blog'] = Blog.objects.all().order_by('?')[:3]
+
         return context_data
 
 
@@ -29,7 +35,7 @@ class ClientListView(ListView):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        if self.request.user.has_perm('mailing.set_mailing_status'):
+        if self.request.user.has_perm('mailing.set_mailing_active'):
             return queryset
 
         return queryset.filter(user=self.request.user)
@@ -123,10 +129,55 @@ class MailingDeleteView(UserPassesTestMixin, DeleteView):
         return user.is_authenticated and (mailing.user == user or user.has_perm('mailing.delete_mailing'))
 
 
-@permission_required(perm='mailing.set_mailing_status')
-def set_mailing_status(request, pk):
+class MessageListView(LoginRequiredMixin, ListView):
+    model = Message
+
+    def get_queryset(self):
+        queryset = cache_message(Message, 'message')
+        if self.request.user.has_perm('mailing.set_mailing_active'):
+            return queryset
+        return queryset.filter(user=self.request.user)
+
+
+class MessageCreateView(LoginRequiredMixin, CreateView):
+    model = Message
+    fields = ('subject', 'body',)
+    success_url = reverse_lazy('mailing:message_list')
+
+    def form_valid(self, form):
+        message = form.save()
+        message.user = self.request.user
+        message.save()
+        return super().form_valid(form)
+
+
+class MessageUpdateView(UserPassesTestMixin, UpdateView):
+    model = Message
+    fields = ('subject', 'body',)
+    success_url = reverse_lazy('mailing:message_list')
+
+    def test_func(self):
+        message = self.get_object()
+        user = self.request.user
+        return user.is_authenticated and (message.user == user or user.has_perm('mailing.change_message'))
+
+
+class MessageDeleteView(UserPassesTestMixin, DeleteView):
+    model = Message
+    success_url = reverse_lazy('mailing:message_list')
+
+    def test_func(self):
+        message = self.get_object()
+        user = self.request.user
+        return user.is_authenticated and (message.user == user or user.has_perm('mailing.delete_message'))
+
+
+@permission_required(perm='mailing.set_mailing_active')
+def set_mailing_active(request, pk):
     obj = get_object_or_404(Mailing, pk=pk)
-    if obj:
-        obj.mailing_status = Mailing.STATUS_CHOICES[0][0]
-        obj.save()
+    if obj.is_active:
+        obj.is_active = False
+    else:
+        obj.is_active = True
+    obj.save()
     return redirect(request.META.get('HTTP_REFERER'))

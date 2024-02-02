@@ -21,14 +21,20 @@
                     <a href="{% url 'mailing:mailing_delete' object.pk %}" class="btn btn-danger">Удалить</a>
                 {% endif %}
                 {% if perms.mailing.set_mailing_status or user.is_superuser %}
-                    <a class="btn btn-info" href="{% url 'mailing:set_mailing_status' object.pk %}">Отключить
-                        рассылку</a>
+                    {% if object.is_active %}
+                        <a class="btn btn-info" href="{% url 'mailing:set_mailing_active' object.pk %}">Деактивировать
+                            рассылку</a>
+                    {% else %}
+                        <a class="btn btn-info" href="{% url 'mailing:set_mailing_active' object.pk %}">Активировать
+                            рассылку</a>
+                    {% endif %}
                 {% endif %}
+            
                 <br><br>
                 <a href="{% url 'mailing:mailing_list' %}" class="btn btn-secondary">Все рассылки</a>
             </div>
             <div class="card-footer text-muted">
-                Статус рассылки: {{ object.get_mailing_status_display }}
+                Статус рассылки: {{ object.is_active }}
 
             </div>
         </div>

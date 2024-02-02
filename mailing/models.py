@@ -50,7 +50,7 @@ class Mailing(models.Model):
     mailing_date = models.DateTimeField(verbose_name='mailing date', default=timezone.now)
     mailing_time = models.TimeField(verbose_name='mailing time')
     frequency = models.CharField(max_length=50, verbose_name='frequency', choices=FREQUENCY_CHOICES)
-    mailing_status = models.CharField(max_length=50, verbose_name='mailing status', choices=STATUS_CHOICES)
+    mailing_status = models.CharField(max_length=50, verbose_name='mailing status', choices=STATUS_CHOICES, default='CREATED')
 
     clients = models.ManyToManyField(Client, verbose_name='Clients for mailing')
     message = models.ForeignKey(Message, on_delete=models.CASCADE, verbose_name='Message')
@@ -65,8 +65,8 @@ class Mailing(models.Model):
         verbose_name_plural = 'mailing'
         permissions = [
             (
-                'set_mailing_status',
-                'Can set mailing status'
+                'set_mailing_active',
+                'Can set mailing active'
             ),
         ]
 

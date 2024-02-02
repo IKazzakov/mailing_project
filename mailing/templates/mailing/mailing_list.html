@@ -10,6 +10,7 @@
                 <th scope="col" style="text-align: center">Время рассылки</th>
                 <th scope="col" style="text-align: center">Периодичность</th>
                 <th scope="col" style="text-align: center">Статус рассылки</th>
+                <th scope="col" style="text-align: center">Статус активности</th>
                 <th scope="col" style="text-align: center">Сообщение</th>
                 <th scope="col" style="text-align: center"></th>
             </tr>
@@ -24,6 +25,7 @@
                     <td class="text-center">{{ obj.mailing_time }}</td>
                     <td class="text-center">{{ obj.get_frequency_display }}</td>
                     <td class="text-center">{{ obj.get_mailing_status_display }}</td>
+                    <td class="text-center">{{ obj.is_active }}</td>
                     <td class="text-center">{{ obj.message }}</td>
                     <td class="text-center"><a href="{% url 'mailing:mailing_detail' obj.pk %}"
                                                class="btn btn-dark">Перейти к рассылке</a>
