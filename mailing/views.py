@@ -6,9 +6,10 @@ from django.urls import reverse_lazy
 from django.views.generic import TemplateView, ListView, CreateView, UpdateView, DeleteView, DetailView
 
 from mailing.forms import MailingForm
-from mailing.models import Client, Mailing, Message
+from mailing.models import Client, Mailing, Message, MailingLog
 
 from mailing.services import cache_message
+
 
 # Create your views here.
 
@@ -18,19 +19,17 @@ class HomePageView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
-        if self.request.user.has_perm('mailing.set_mailing_active'):
-            context_data['count_mailing_all'] = Mailing.objects.all().count()
-            context_data['count_mailing_active'] = Mailing.objects.filter(is_active=True).count()
-            context_data['count_unique_clients'] = Client.objects.distinct().count()
-        context_data['count_mailing_all'] = Mailing.objects.filter(user=self.request.user).count()
-        context_data['count_mailing_active'] = Mailing.objects.filter(user=self.request.user, is_active=True).count()
-        context_data['count_unique_clients'] = Client.objects.filter(user=self.request.user).distinct().count()
+
+        context_data['count_mailing_all'] = Mailing.objects.all().count()
+        context_data['count_mailing_active'] = Mailing.objects.filter(is_active=True).count()
+        context_data['count_unique_clients'] = Client.objects.distinct().count()
+
         # context_data['blog'] = Blog.objects.all().order_by('?')[:3]
 
         return context_data
 
 
-class ClientListView(ListView):
+class ClientListView(LoginRequiredMixin,ListView):
     model = Client
 
     def get_queryset(self):
@@ -170,6 +169,17 @@ class MessageDeleteView(UserPassesTestMixin, DeleteView):
         message = self.get_object()
         user = self.request.user
         return user.is_authenticated and (message.user == user or user.has_perm('mailing.delete_message'))
+
+
+class MailingLogListView(LoginRequiredMixin, ListView):
+    model = MailingLog
+    template_name = 'mailing/mailing_log_list.html'
+
+    def get_queryset(self):
+        queryset = cache_message(MailingLog, 'mailing_log')
+        if self.request.user.has_perm('mailing.set_mailing_active'):
+            return queryset
+        return queryset.filter(user=self.request.user)
 
 
 @permission_required(perm='mailing.set_mailing_active')
