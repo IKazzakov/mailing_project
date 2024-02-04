@@ -25,7 +25,7 @@
             {% if perms.users.set_is_active %}
             <a class="dropdown-item" href="{% url 'users:users_list' %}">Пользователи</a>
             {% endif %}
-            <a class="dropdown-item" href="">Блог</a>
+            <a class="dropdown-item" href="{% url 'blog:record_list' %}">Блог</a>
             <a class="dropdown-item" href="{% url 'mailing:client_list' %}">Клиенты</a>
             <a class="dropdown-item" href="{% url 'mailing:message_list' %}">Сообщения</a>
             <a class="dropdown-item" href="{% url 'mailing:mailing_list' %}">Рассылки</a>
@@ -43,7 +43,7 @@
             <line x1="21" y1="21" x2="15.8" y2="15.8"></line>
         </svg>
     </a>
-    <a class="p-2 btn btn-outline-dark" href="">Блог</a>
+    <a class="p-2 btn btn-outline-dark" href="{% url 'blog:record_list' %}">Блог</a>
     <a class="p-2 btn btn-outline-dark" href="{% url 'mailing:message_list' %}">Сообщения</a>
     <a class="p-2 btn btn-outline-dark" href="{% url 'mailing:mailing_list' %}">Все рассылки</a>
     <a class="p-2 btn btn-outline-dark" href="{%  url 'mailing:mailing_log_list' %}">Статус рассылок</a>
