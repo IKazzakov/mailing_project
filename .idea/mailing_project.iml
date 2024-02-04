@@ -28,6 +28,8 @@
         <option value="$MODULE_DIR$/mailing/templates/mailing/includes" />
         <option value="$MODULE_DIR$/users/templates" />
         <option value="$MODULE_DIR$/users/templates/users" />
+        <option value="$MODULE_DIR$/blog/templates" />
+        <option value="$MODULE_DIR$/blog/templates/blog" />
       </list>
     </option>
   </component>

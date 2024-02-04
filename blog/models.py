@@ -12,7 +12,7 @@ class Blog(models.Model):
     picture = models.ImageField(upload_to='blog/', **NULLABLE, verbose_name='Изображение')
     created_date = models.DateField(auto_now_add=True, verbose_name='Дата создания')
     views = models.IntegerField(verbose_name='Количество просмотров', default=0, **NULLABLE)
-    published_on = models.BooleanField(default=False, verbose_name='дата публикации')
+    published_on = models.BooleanField(default=False, verbose_name='Опубликована')
 
     class Meta:
         verbose_name = 'Статья'

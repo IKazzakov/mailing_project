@@ -1,4 +1,5 @@
 {% extends 'mailing/base.html' %}
+{% load tags %}
 {% block content %}
     <div class="container-h text-center my-5 py-5">
         <div class="row">
@@ -30,9 +31,9 @@
                                     style="color: white; margin: 0;">{{ item.title }}</a></h3>
                             <div class="card-body">
                                 <h5 class="card-title">{{ item.body | truncatechars:100 }}</h5>
-                                {#                                <img src="{% mediapath item.picture %}"#}
-                                class="card-img-top mx-auto d-block img-fluid" alt=""
-                                style="width: auto; height: auto;">
+                                <img src="{% mediapath item.picture %}"
+                                     class="card-img-top mx-auto d-block img-fluid" alt=""
+                                     style="width: auto; height: auto;">
                                 <ul>
                                     <li><a class="card-text">Просмотры: {{ item.views }}</a></li>
                                     <li><p class="card-text">Дата публикации: {{ item.created_date }}</p></li>

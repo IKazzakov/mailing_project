@@ -5,6 +5,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, ListView, CreateView, UpdateView, DeleteView, DetailView
 
+from blog.models import Blog
 from mailing.forms import MailingForm
 from mailing.models import Client, Mailing, Message, MailingLog
 
@@ -24,7 +25,7 @@ class HomePageView(TemplateView):
         context_data['count_mailing_active'] = Mailing.objects.filter(is_active=True).count()
         context_data['count_unique_clients'] = Client.objects.distinct().count()
 
-        # context_data['blog'] = Blog.objects.all().order_by('?')[:3]
+        context_data['blog'] = Blog.objects.all().order_by('?')[:3]
 
         return context_data
 

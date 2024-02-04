@@ -35,11 +35,19 @@ class Message(models.Model):
 
 
 class Mailing(models.Model):
+    DAILY = 'daily'
+    WEEKLY = 'weekly'
+    MONTHLY = 'monthly'
+
     FREQUENCY_CHOICES = [
         ('DAILY', 'daily'),
         ('WEEKLY', 'weekly'),
         ('MONTHLY', 'monthly'),
     ]
+
+    CREATED = 'created'
+    STARTED = 'started'
+    FINISHED = 'finished'
 
     STATUS_CHOICES = [
         ('CREATED', 'created'),
@@ -72,13 +80,17 @@ class Mailing(models.Model):
 
 
 class MailingLog(models.Model):
+    SENT = 'sent'
+    FAILED = 'failed'
+    PENDING = 'pending'
+
     STATUS_CHOICES = [
         ('SENT', 'sent'),
         ('FAILED', 'failed'),
         ('PENDING', 'pending')
     ]
 
-    attempt_time = models.DateTimeField(auto_now_add=True ,verbose_name='time of attempt')
+    attempt_time = models.DateTimeField(auto_now_add=True, verbose_name='time of attempt')
     status = models.CharField(max_length=50, choices=STATUS_CHOICES, verbose_name='status of attempt')
     server_response = models.TextField(max_length=200, verbose_name='server response')
     mailing = models.ForeignKey(Mailing, on_delete=models.CASCADE, verbose_name='mailing')
