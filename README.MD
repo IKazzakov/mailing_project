@@ -44,14 +44,11 @@
     - python manage.py runserver
 
 ### 6. Для отправки рассылки из командной строки:
-    - python manage.py sendmessage
+    - python manage.py services
 
 ### 7. Автоматическая рассылка реализована с помощью библиотеки django-crontab. По умолчанию система проверяет наличие новых рассылок и отправляет их с периодичностью 5 минут (настройку можно изменить в config/settings.py -> CRONJOBS).
     - Добавление автоматической рассылки
   
         python manage.py crontab add
-    
-    - Рассылка может быть запущена в любое время из командной строки с помощью кастомной команды.
-   
-        python manage.py services
+
    
