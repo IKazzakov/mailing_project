@@ -30,7 +30,7 @@ class HomePageView(TemplateView):
         return context_data
 
 
-class ClientListView(LoginRequiredMixin,ListView):
+class ClientListView(LoginRequiredMixin, ListView):
     model = Client
 
     def get_queryset(self):

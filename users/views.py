@@ -1,3 +1,5 @@
+import secrets
+
 from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
 from django.http import HttpResponseForbidden
@@ -42,7 +44,7 @@ class RegisterView(CreateView):
 
     def form_valid(self, form):
         new_user = form.save()
-        token = default_token_generator.make_token(new_user)
+        token = secrets.token_urlsafe(32)
         new_user.verification_code = token
         new_user.save()
         activation_url = reverse_lazy('users:verify_email', kwargs={'token': token})

@@ -45,20 +45,20 @@ class Mailing(models.Model):
         ('MONTHLY', 'monthly'),
     ]
 
-    CREATED = 'created'
-    STARTED = 'started'
-    FINISHED = 'finished'
+    CREATED = 'CREATED'
+    STARTED = 'STARTED'
+    FINISHED = 'FINISHED'
 
     STATUS_CHOICES = [
-        ('CREATED', 'created'),
-        ('STARTED', 'started'),
-        ('FINISHED', 'finished')
+        (CREATED, 'created'),
+        (STARTED, 'started'),
+        (FINISHED, 'finished')
     ]
 
     mailing_date = models.DateTimeField(verbose_name='mailing date', default=timezone.now)
     mailing_time = models.TimeField(verbose_name='mailing time')
     frequency = models.CharField(max_length=50, verbose_name='frequency', choices=FREQUENCY_CHOICES)
-    mailing_status = models.CharField(max_length=50, verbose_name='mailing status', choices=STATUS_CHOICES, default='CREATED')
+    mailing_status = models.CharField(max_length=50, verbose_name='mailing status', choices=STATUS_CHOICES, default=CREATED)
 
     clients = models.ManyToManyField(Client, verbose_name='Clients for mailing')
     message = models.ForeignKey(Message, on_delete=models.CASCADE, verbose_name='Message')
