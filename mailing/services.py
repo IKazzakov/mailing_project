@@ -1,3 +1,4 @@
+import pytz
 from django.conf import settings
 from django.core.cache import cache
 
@@ -11,14 +12,13 @@ from mailing.models import Mailing, MailingLog
 def start_mailing():
     # Получить все рассылки
     mailings = Mailing.objects.all()
-    print(mailings)
     for mailing in mailings:
         if mailing.mailing_status == Mailing.STARTED:
             obj = MailingLog.objects.filter(mailing=mailing).last()
 
             if obj is None:
                 mail_time = mailing.mailing_time.replace(second=0, microsecond=0)
-                now_time = datetime.now().replace(second=0, microsecond=0).time()
+                now_time = datetime.now(pytz.timezone('Europe/Moscow')).time().replace(second=0, microsecond=0)
                 if mail_time == now_time:
                     send_message(mailing)
 

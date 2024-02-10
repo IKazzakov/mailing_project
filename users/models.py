@@ -21,9 +21,9 @@ class User(AbstractUser):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
-    def save(self, *args, **kwargs):
-        self.password = make_password(self.password)
-        super(User, self).save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     self.password = make_password(self.password)
+    #     super(User, self).save(*args, **kwargs)
 
     def __str__(self):
         return self.email
